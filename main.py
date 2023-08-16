@@ -6,9 +6,9 @@ from langchain.chains import LLMChain,SequentialChain
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 import os
 
-os.environ['OPENAI_API_KEY'] = st.secrets['OPENAI_API_KEY']
+st.secrets['OPENAI_API_KEY']
 
-llm = OpenAI(openai_api_key=os.environ['OPEN_API_KEY'],temperature=0.0)
+llm = OpenAI(openai_api_key=st.secrets["OPENAI_API_KEY"],temperature=0.0)
 
 def generate_questions(job_description,llm):
     hr_prompt = """
