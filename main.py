@@ -5,8 +5,11 @@ from langchain.llms import OpenAI
 from langchain.prompts.chat import PromptTemplate
 from langchain.chains import LLMChain,SequentialChain
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
+import os
 
-llm = ChatOpenAI(openai_api_key='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',temperature=0.0)
+os.environ['OPENAI_API_KEY'] = st.secrets['OPENAI_API_KEY']
+
+llm = OpenAI(openai_api_key=os.environ['OPEN_API_KEY'],temperature=0.0)
 
 def generate_questions(job_description,llm):
     hr_prompt = """
