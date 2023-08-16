@@ -1,4 +1,4 @@
-# hire_ai \n\n
+# hire_ai
 **problem statement:** In the face of a high volume of job applicants, companies resort to using Applicant Tracking Systems (ATS) to screen resumes based on keyword matches, leading to the elimination of candidates. Subsequently, many organizations employ LeetCode tests or aptitude assessments to further narrow down the pool. However, these tests often lack relevance to the actual job requirements, hindering companies from identifying and hiring the most qualified candidates.
 
 Many times, deserving candidates lose valuable opportunities due to this screening process, which heavily relies on keyword matches and irrelevant tests, leading to potential misjudgment of applicants' true capabilities and qualifications.
