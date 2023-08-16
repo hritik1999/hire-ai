@@ -1,12 +1,12 @@
 import streamlit as st
 import pandas as pd
-from langchain.llms import OpenAI 
+from langchain.chat_models import ChatOpenAI 
 from langchain.prompts.chat import PromptTemplate
 from langchain.chains import LLMChain,SequentialChain
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 import os
 
-llm = OpenAI(openai_api_key=st.secrets["OPENAI_API_KEY"],temperature=0.0)
+llm = ChatOpenAI(openai_api_key=st.secrets["OPENAI_API_KEY"],temperature=0.0)
 
 def generate_questions(job_description,llm):
     hr_prompt = """
