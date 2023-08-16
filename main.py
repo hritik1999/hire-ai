@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-from langchain.chat_models import ChatOpenAI
 from langchain.llms import OpenAI 
 from langchain.prompts.chat import PromptTemplate
 from langchain.chains import LLMChain,SequentialChain
