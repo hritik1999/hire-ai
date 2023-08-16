@@ -1,3 +1,4 @@
+!pip install langchain
 import streamlit as st
 import pandas as pd
 from langchain.llms import OpenAI 
