@@ -122,10 +122,11 @@ def evaluate_total_score(role,questions,answers,llm):
     
     
 def result(df):
-    result = df.iloc[:,1:10].sum()
+    result = df.iloc[:,1:10].mean()
     final_score = result.mean()
     result['total_score'] = final_score
-    return result
+    result *= 100
+    return result 
     
 placeholder = """2-4 yrs experience with Bachelor's/Master's degree with a focus on CS, Machine Learning, Signal Processing.
 Strong knowledge of various ML concepts/algorithms and hands on experience in relevant projects.
