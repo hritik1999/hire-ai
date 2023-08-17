@@ -153,7 +153,7 @@ with st.sidebar:
 
 
 if not job_description:
-    st.info("Please enter a job description")
+    st.info("Please enter a job description in the sidebar!")
     st.stop()
     
 role_questions = generate_questions(job_description,llm)
