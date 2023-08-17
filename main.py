@@ -170,7 +170,7 @@ with st.form('interview',clear_on_submit=True):
         st.text_area("answer", key=i, height=400)
     form_submit = st.form_submit_button("submit")
 if form_submit:
-    st.write("Thank you for your time. I will now evaluate your answers.")
+    st.write("Thank you for your time. I will now evaluate your answers. Please wait...")
     display_result(role,questions,llm)
 
 
