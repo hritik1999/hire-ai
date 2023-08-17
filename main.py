@@ -130,13 +130,50 @@ def result(df):
     result['total_score'] = final_score
     return result 
     
-placeholder = """2-4 yrs experience with Bachelor's/Master's degree with a focus on CS, Machine Learning, Signal Processing.
-Strong knowledge of various ML concepts/algorithms and hands on experience in relevant projects.
-Experience in machine learning platform such as TensorFlow, PyTorch and solid programming development skills on Python.
-Ability to learn new tools, languages and frameworks quickly.
-Familiarity with databases, data transformations techniques, ability to work with unstructured data like OCR/ speech/text data.
-Previous experience with working in Conversational AI is a plus.
-Git portfolios will be helpful.
+placeholder = """Role - Machine Learning Engineer / Data Scientist
+Designation - Technical Analyst / Lead
+Experience - 6 - 10 Years
+Job Location - Greater Noida, Mumbai, Pune, Bengaluru, & Hyderabad
+Skills - Machine Learning Techniques, statistical and data mining techniques
+
+We at Coforge$ are hiring Machine Learning Engineers with the following skill set:
+
+Master’s degree in Statistics, Mathematics, Computer Science, or another quantitative field.
+6 – 10 years of experience manipulating data sets and building statistical models.
+Develop custom statistical models and algorithms to apply to datasets.
+Use data wrangling, feature engineering, and predictive modeling techniques to optimize customer experiences, revenue generation, and other business outcomes.
+Use the A/B testing framework and test model quality.
+Coordinate with different functional teams to implement and monitor analytical models.
+Programming Skills – knowledge of statistical programming languages like R, Python, and database query languages like SQL, Hive, etc.
+Experience working with Jupyter Notebooks – Nice to have.
+Experience designing & building models using AWS SageMaker with data in Snowflake.
+Experience with Data Visualization Tools like Power BI, AWS Quicksight, etc., to help visualize insights from data.
+Excellent communication skills engaging with both technical and non-technical audiences.
+Strong analytical and problem-solving skills.
+Good applied statistical skills, including knowledge of statistical tests, distributions, regression, maximum likelihood estimators, etc.
+Knowledge of a variety of machine learning techniques (clustering, decision tree learning, artificial neural networks, etc.) and their real-world advantages/drawbacks.
+Knowledge and experience in statistical and data mining techniques: GLM/Regression, Random Forest, Boosting, Trees, text mining, social network analysis, etc.
+Strong Math Skills (Multivariable Calculus and Linear Algebra) - understanding the fundamentals of Multivariable Calculus and Linear Algebra is important as they form the basis of a lot of predictive performance or algorithm optimization techniques.
+Data Wrangling proficiency in preparing data for models and handling imperfections in data.
+Job Type: Full-time
+
+Salary: ₹1,000,000.00 - ₹3,000,000.00 per year
+
+Benefits:
+
+Health insurance
+Life insurance
+Provident Fund
+Schedule:
+
+Day shift
+Ability to commute/relocate:
+
+Greater Noida, Uttar Pradesh: Reliably commute or willing to relocate with an employer-provided relocation package (Required)
+Experience:
+
+total work: 6 years (Required)
+Work Location: In person
 """
 def display_result(role,questions,llm):
     for i in range(len(questions)):
