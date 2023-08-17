@@ -100,6 +100,9 @@ Response: ###{answer}###
     output_parser_3 = StructuredOutputParser.from_response_schemas(response_schemas)
     output_format = output_parser_3.get_format_instructions()
 
+    if answer == "":
+        answer = 'The applicant didnt answer anything. Set all rubric score to 0.'
+
     evaluator_template = PromptTemplate(input_variables=["role","question","answer","output_format"],template=evaluator_prompt)
     message = evaluator_template.format(role=role,question=question,answer=answer,output_format=output_format)
     output = llm.predict(message)
@@ -164,7 +167,7 @@ with st.form('interview',clear_on_submit=True):
         st.text_area("answer", key=i, height=400)
     form_submit = st.form_submit_button("submit")
 if form_submit:
-    st.write("Thank you for your time. I will now evaluate your answers. Please wait...")
+    st.info("Thank you for your time. I will now evaluate your answers. Please wait a minute or two....")
     display_result(role,questions,llm)
 
 
