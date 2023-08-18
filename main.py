@@ -1,12 +1,15 @@
 import streamlit as st
 import pandas as pd
-from langchain.chat_models import ChatOpenAI 
+from langchain.chat_models import ChatOpenAI
+from langchain.llms import OpenAI 
 from langchain.prompts.chat import PromptTemplate
 from langchain.chains import LLMChain,SequentialChain
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 import os
 
-llm = ChatOpenAI(openai_api_key=st.secrets["OPENAI_API_KEY"],temperature=0.0)
+##os.environ['OPENAI_API_KEY'] = st.secrets['OPENAI_API_KEY']
+
+llm = ChatOpenAI(openai_api_key='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',temperature=0.0)
 
 def generate_questions(job_description,llm):
     hr_prompt = """
@@ -65,28 +68,28 @@ if The topics contains 'job descriptions not given' then output ['Please give a 
     return {'role':role,'questions':questions}
     
 
-
 def evaluate_answer(role,question,answer,llm):
     evaluator_prompt = """"
-You possess the expertise of a {role}, and your task involves evaluating the interviewee's response to the following inquiry:
+You are an expert {role}, and your task involves evaluating the interviewee's response to the question below:
 
 Question: {question}
 
-Employ the provided rubric below to meticulously assess the given response between the delimeter ###:
-Kindly assign scores for each criterion on a scale from 1 to 10.
-check If the response is empty or irrelevant, please assign a score of 0 if it is empty to all rubric.
+Follow the following steps to evaulate the interviewee's response:
+
+STEP 1: Check if the answer is relevent to the question. If yes continue , If no then set all rubrics to 0.
+STEP 2: Use the rubric below to assess the given response between the delimeter ###:
 
 Rubric:
 
-Accuracy: Assess the correctness of historical information.Ensure the assessment is relevant to the context of the question; otherwise, mark it as 0.Justify the score.
-Depth: Consider the level of detail and expansion beyond basic facts.Ensure the assessment is relevant to the context of the question; otherwise, mark it as 0.Justify the score.
-Coherence: Evaluate the logical flow and organization of ideas.Justify the score.
+Accuracy: Assess the correctness of historical information.
+Depth: Consider the level of detail and expansion beyond basic facts.
+Coherence: Evaluate the logical flow and organization of ideas.
 Grammar and Clarity: Check for proper language use and clarity of expression.
-Technical Skills: Rate the candidate's grasp of technical concepts and their ability to apply them effectively. Ensure the assessment is relevant to the context of the question; otherwise, mark it as 0. Provide reasoning for the score assigned based on the alignment of technical knowledge with the question's requirements.
-Problem-Solving Abilities: Gauge the candidate's approach to problem-solving, including their methodology and creative thinking. Evaluate the relevance of the solution to the given question; otherwise, mark it as 0. Offer reasoning behind the score provided, considering how well the solution addressed the question's context.
-Creativity: Assess the originality and innovative thinking demonstrated in the response. Determine whether the creative element aligns with the question's requirements; otherwise, mark it as 0. Provide rationale for the score assigned, focusing on the uniqueness of the candidate's approach.
-Attention to Detail: Evaluate the precision and thoroughness of the candidate's response. Ensure the attention to detail is applied in context; otherwise, mark it as 0. Justify the score by illustrating how thoroughly the candidate addressed the question's nuances.
-Problem Identification: Assess the candidate's capacity to identify key issues or challenges. Verify whether the identified problems are directly related to the question; otherwise, mark it as 0. Provide reasoning for the score assigned, emphasizing the relevance of the identified problems to the question.
+Technical Skills: Rate the candidate's grasp of technical concepts and their ability to apply them effectively.Provide reasoning for the score assigned based on the alignment of technical knowledge with the question's requirements.
+Problem-Solving Abilities: Gauge the candidate's approach to problem-solving, including their methodology and creative thinking.Offer reasoning behind the score provided, considering how well the solution addressed the question's context.
+Creativity: Assess the originality and innovative thinking demonstrated in the response.Provide rationale for the score assigned, focusing on the uniqueness of the candidate's approach.
+
+Assign scores for each criterion on a scale from 1 to 10.
 
 Response: ###{answer}###
 
@@ -95,25 +98,31 @@ Response: ###{answer}###
     response_schemas = [
     ResponseSchema(name="question", description="question that was asked"),
     ResponseSchema(name="Accuracy", description="the accuracy score assigned"),
+    ResponseSchema(name="Accuracy_reason", description="The reason for the accuracy score assigned"),    
     ResponseSchema(name="Depth", description="the depth score assigned"),
+    ResponseSchema(name="Depth_reason", description="The reason for the Depth score assigned"),
     ResponseSchema(name="Coherence", description="the Coherence score assigned"),
+    ResponseSchema(name="Coherence_reason", description="The reason for the Coherence score assigned"),
     ResponseSchema(name="Grammar and Clarity", description="the grammar and clarity score assigned"),
+    ResponseSchema(name="Grammar_reason", description="The reason for the Grammar and Clarity score assigned"),
     ResponseSchema(name="Technical Skills", description="the Technical skills score assigned"),
+    ResponseSchema(name="Technical_reason", description="The reason for the Technical Skill score assigned"),
     ResponseSchema(name="Problem-Solving", description="the Problem-Solving score assigned"),
+    ResponseSchema(name="Problem_Solving_reason", description="The reason for the  score assigned"),
     ResponseSchema(name="Creativity", description="the Creativity score assigned"),
-    ResponseSchema(name="Attention to Detail", description="the Attention to Detail score assigned"),
-    ResponseSchema(name="Problem Identification", description="the Problem Identification score assigned"), 
+    ResponseSchema(name="Creativity_reason", description="The reason for the Creativity score assigned"),
 ]
     output_parser_3 = StructuredOutputParser.from_response_schemas(response_schemas)
     output_format = output_parser_3.get_format_instructions()
-
-    if answer == "":
+    
+    if answer == '':
         answer = 'The applicant didnt answer anything. Set all rubric score to 0.'
 
     evaluator_template = PromptTemplate(input_variables=["role","question","answer","output_format"],template=evaluator_prompt)
     message = evaluator_template.format(role=role,question=question,answer=answer,output_format=output_format)
     output = llm.predict(message)
     return output_parser_3.parse(output)
+    
 
 def evaluate_total_score(role,questions,answers,llm):
     evaluations = []
@@ -125,14 +134,14 @@ def evaluate_total_score(role,questions,answers,llm):
             pass
             
     df = pd.DataFrame(evaluations)
-    cols = df.columns.drop('question')
+    cols = ['Accuracy','Depth','Coherence','Grammar and Clarity','Technical Skills','Problem-Solving','Creativity']
     df[cols] = df[cols].apply(pd.to_numeric, errors='coerce')
             
     return df
-    
-    
+
 def result(df):
-    result = df.iloc[:,1:10].sum()
+    cols = ['Accuracy','Depth','Coherence','Grammar and Clarity','Technical Skills','Problem-Solving','Creativity']
+    result = df[cols].sum()
     total = len(df)*10
     result /= total
     result *= 100
@@ -140,7 +149,8 @@ def result(df):
     result['total_score'] = final_score
     return result 
 
-
+pd.set_option('max_colwidth',None)
+    
 def display_result(role,questions,llm):
     for i in range(len(questions)):
         answers.append(st.session_state[i])
@@ -155,14 +165,14 @@ st.header('Hire AI')
 
 with st.sidebar:
         st.title("Hire AI")
-        name = st.text_input("Name", key="name", value="John Doe")
-        job_description = st.text_area("Job Description(copy paste from linkedin or any site)", key="job_description", height=400)
+        name = st.text_input("name", key="name", value="John Doe")
+        job_description = st.text_area("job description(copy paste from linkedin or any site)", key="job_description", height=400)
 
 
 if not job_description:
-    st.info("Please enter a job description in the sidebar!")
+    st.info("Please enter a job description")
     st.stop()
-    
+
 role_questions = generate_questions(job_description,llm)
 role = role_questions['role']
 questions = role_questions['questions']
@@ -174,7 +184,7 @@ with st.form('interview',clear_on_submit=True):
         st.text_area("answer", key=i, height=400)
     form_submit = st.form_submit_button("submit")
 if form_submit:
-    st.info("Thank you for your time. I will now evaluate your answers. Please wait a minute or two....")
+    st.info("Thank you for your time. I will now evaluate your answers. Please wait for a minute or two....")
     display_result(role,questions,llm)
 
 
