@@ -9,7 +9,7 @@ import os
 
 ##os.environ['OPENAI_API_KEY'] = st.secrets['OPENAI_API_KEY']
 
-llm = ChatOpenAI(openai_api_key='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',temperature=0.0)
+llm = ChatOpenAI(openai_api_key=st.secrets['OPENAI_API_KEY'],temperature=0.0)
 
 def generate_questions(job_description,llm):
     hr_prompt = """
