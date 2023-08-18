@@ -11,9 +11,13 @@ llm = ChatOpenAI(openai_api_key=st.secrets["OPENAI_API_KEY"],temperature=0.0)
 def generate_questions(job_description,llm):
     hr_prompt = """
 You are an HR professional tasked with understanding a job description thoroughly. 
-Your objective is to accurately extract the primary role and compile a comprehensive list of theoretical and techniqal key concepts 
-that the interviewee should be familiar with based on the job description provided in the triple backticks below:
-```{job_description}```
+Your objective is to accurately extract the primary role and compile a comprehensive list of key concepts 
+that the interviewee should be familiar with based on the job description provided in the triple hashtags below:
+
+###{job_description}###
+
+If the provided input is not a job description then output 'none' for role and 'job description not given' for topics.
+
 {format_instructions}
 """
 
@@ -28,9 +32,13 @@ that the interviewee should be familiar with based on the job description provid
 
     concept_chain = LLMChain(llm=llm, prompt=concept_template, output_key="concepts")
     interviewer_prompt = """
-As an expert interviewer, your task is to formulate a set of 10 theoretical and technical questions for candidates based on the concepts provided below.
+As an expert interviewer, your task is to formulate a set of 10 probing questions for candidates based on the concepts provided below between triple hastags.
 Craft questions that delve into each concept, assessing the candidate's understanding and ability to articulate their knowledge.
-```{concepts}```
+
+###{concepts}###
+
+if The topics contains 'job descriptions not given' then output ['Please give a valid job description'] for questions key.
+
 {instruction_format}
 """
     response_schemas = [
@@ -54,7 +62,6 @@ Craft questions that delve into each concept, assessing the candidate's understa
     output = overall_chain({"job_description":job_description,"format_instructions":format_instructions,"instruction_format":instructions})
     role = output_parser_1.parse(output['concepts'])['role']
     questions = output_parser_2.parse(output['questions'])['questions']
-    
     return {'role':role,'questions':questions}
     
 
