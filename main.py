@@ -52,8 +52,6 @@ if The topics contains 'job descriptions not given' then output ['Please give a 
 
     interviewer_template = PromptTemplate(input_variables=["concepts","instruction_format"],template=interviewer_prompt)
 
-    concepts = """"'{'role': 'Data Scientist', 'topics': ['Interacting with customers', 'Explaining technical concepts in layman terms', 'Troubleshooting model performance', 'Reviewing model metrics', 'Exploring and recommending best practices for structuring dataset', 'Performing data cleaning and pre-processing', 'Removing rows/cols', 'Stripping values', 'Changing units', 'Normalization', 'Imputing missing values', 'Expanding cols', 'Conducting feature engineering', 'Creating new cols out of existing cols', 'Running statistical functions on rows/cols', 'Transforming columns', 'Analyzing large amounts of information', 'Discovering trends and patterns', 'Building predictive models', 'Building machine-learning algorithms', "Using Obviously Al's No-Code tool", 'Proposing solutions and strategies to business challenges', 'Collaborating with engineering and product development teams', 'Updating and managing technical support tickets and requests']}'"""
-
     question_chain = LLMChain(llm=llm, prompt=interviewer_template, output_key="questions")
     
     overall_chain = SequentialChain(
