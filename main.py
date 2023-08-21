@@ -94,7 +94,6 @@ Response: ###{answer}###
 {output_format}
 """
     response_schemas = [
-    ResponseSchema(name="question", description="question that was asked"),
     ResponseSchema(name="Accuracy", description="the accuracy score assigned"),
     ResponseSchema(name="Accuracy_reason", description="The reason for the accuracy score assigned"),    
     ResponseSchema(name="Depth", description="the depth score assigned"),
@@ -120,25 +119,11 @@ Response: ###{answer}###
     message = evaluator_template.format(role=role,question=question,answer=answer,output_format=output_format)
     output = llm.predict(message)
     return output_parser_3.parse(output)
-    
 
-def evaluate_total_score(role,questions,answers,llm):
-    evaluations = []
-    for i in range(len(questions)):
-        try:
-            evaluation = evaluate_answer(role,questions[i],answers[i],llm)
-            evaluations.append(evaluation)
-        except:
-            pass
-            
+def result(evaluations):
     df = pd.DataFrame(evaluations)
     cols = ['Accuracy','Depth','Coherence','Grammar and Clarity','Technical Skills','Problem-Solving','Creativity']
     df[cols] = df[cols].apply(pd.to_numeric, errors='coerce')
-            
-    return df
-
-def result(df):
-    cols = ['Accuracy','Depth','Coherence','Grammar and Clarity','Technical Skills','Problem-Solving','Creativity']
     result = df[cols].sum()
     total = len(df)*10
     result /= total
@@ -150,12 +135,22 @@ def result(df):
 pd.set_option('max_colwidth',None)
     
 def display_result(role,questions,llm):
+    evaluations = []
     for i in range(len(questions)):
-        answers.append(st.session_state[i])
-    df = evaluate_total_score(role,questions,answers,llm)
-    final_score = result(df)
-    st.write("final score",final_score)
-    st.write(df)
+        try:
+            evaluation = evaluate_answer(role,questions[i],st.session_state[i],llm)
+            with st.expander("Question: "+questions[i]):
+                st.write("Answer:",st.session_state[i])
+                st.write("Evaluation:")
+                st.write(pd.Series(evaluation))
+            evaluations.append(evaluation)
+        except:
+            pass
+    final = result(evaluations)
+    st.write("result:")
+    st.table(final)
+    st.write("Thank you for your time. We will get back to you soon.")
+    st.balloons()
 
 
 # Title
@@ -176,11 +171,13 @@ role = role_questions['role']
 questions = role_questions['questions']
 st.write("Welcome to Hire AI",name,", I am your AI interviwer. I will be asking you a few questions to evaluate your skills. for the job role of a",role,". ")
 answers = []
+
 with st.form('interview',clear_on_submit=True):
     for i in range(len(questions)):
         st.write(questions[i])
         st.text_area("answer", key=i, height=400)
     form_submit = st.form_submit_button("submit")
+
 if form_submit:
     st.info("Thank you for your time. I will now evaluate your answers. Please wait for a minute or two....")
     display_result(role,questions,llm)
