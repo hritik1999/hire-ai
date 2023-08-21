@@ -152,6 +152,7 @@ def display_result(role,questions,llm):
     st.table(final)
     st.write("Thank you for your time. We will get back to you soon.")
     st.balloons()
+    st.write('Please refresh the page to start a new interview.')
 
 
 st.header('AI Interviewer')
