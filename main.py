@@ -154,12 +154,12 @@ def display_result(role,questions,llm):
     st.balloons()
 
 
-st.header('Hire AI')
+st.header('AI Interviewer')
 
 with st.sidebar:
         st.title("Hire AI")
-        name = st.text_input("name", key="name", value="John Doe")
-        job_description = st.text_area("job description(copy paste from linkedin or any site)", key="job_description", height=400)
+        name = st.text_input("Name", key="name", value="John Doe")
+        job_description = st.text_area("Job description(copy paste from linkedin or any site)", key="job_description", height=400)
 
 
 if not job_description:
