@@ -87,7 +87,7 @@ Technical Skills: Rate the candidate's grasp of technical concepts and their abi
 Problem-Solving Abilities: Gauge the candidate's approach to problem-solving, including their methodology and creative thinking.Offer reasoning behind the score provided, considering how well the solution addressed the question's context.
 Creativity: Assess the originality and innovative thinking demonstrated in the response.Provide rationale for the score assigned, focusing on the uniqueness of the candidate's approach.
 
-Assign scores for each criterion on a scale from 1 to 10.
+Assign scores for each criterion on a scale from 1 to 10.Be strict with the scores.
 
 Response: ###{answer}###
 
