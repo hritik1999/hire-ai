@@ -140,9 +140,10 @@ def display_result(role,questions,llm):
         try:
             evaluation = evaluate_answer(role,questions[i],st.session_state[i],llm)
             with st.expander("Question: "+questions[i]):
-                st.write("Answer:",st.session_state[i])
                 st.write("Evaluation:")
-                st.write(pd.Series(evaluation))
+                st.table(pd.Series(evaluation))
+                st.write("Answer:")
+                st.write(st.session_state[i])
             evaluations.append(evaluation)
         except:
             pass
@@ -153,7 +154,6 @@ def display_result(role,questions,llm):
     st.balloons()
 
 
-# Title
 st.header('Hire AI')
 
 with st.sidebar:
@@ -166,23 +166,42 @@ if not job_description:
     st.info("Please enter a job description")
     st.stop()
 
-role_questions = generate_questions(job_description,llm)
-role = role_questions['role']
-questions = role_questions['questions']
-st.write("Welcome to Hire AI",name,", I am your AI interviwer. I will be asking you a few questions to evaluate your skills. for the job role of a",role,". ")
-answers = []
+if "disabled" not in st.session_state:
+    st.session_state["disabled"] = False
 
-with st.form('interview',clear_on_submit=True):
-    for i in range(len(questions)):
-        st.write(questions[i])
-        st.text_area("answer", key=i, height=400)
-    form_submit = st.form_submit_button("submit")
-
-if form_submit:
+if "messages" not in st.session_state:
+    role_questions = generate_questions(job_description,llm)
+    st.session_state.role = role_questions['role']
+    st.session_state.questions = role_questions['questions']
+    st.session_state.i = 0
+    st.session_state.messages = [{'role':'assistant','content':"Welcome to Hire AI "+name+", I am your AI interviwer. I will be asking you a few questions to evaluate your skills. for the job role of a "+st.session_state.role+"."},
+                                 {'role':'assistant','content':"Please answer the following "+str(len(st.session_state.questions))+" questions to the best of your ability. If you dont know the answer to a question, please type 'I dont know' or 'I dont know the answer to this question'."},
+                                 {'role':'assistant','content':st.session_state.questions[0]}]
+    
+if st.session_state.i == (len(st.session_state.questions)-1):
+    st.session_state["disabled"] = True
     st.info("Thank you for your time. I will now evaluate your answers. Please wait for a minute or two....")
-    display_result(role,questions,llm)
+    display_result(st.session_state.role,st.session_state.questions,llm)
+    st.stop()
 
+with st.container():
+    for message in st.session_state.messages:
+        with st.chat_message(message['role']):
+            st.markdown(message['content'])
 
+    if answer := st.chat_input('answer',disabled=st.session_state["disabled"]):
+        st.chat_message('user').markdown(answer)
+        st.session_state.messages.append({'role':'user','content':answer})
+        st.session_state.i += 1
+        i = st.session_state.i
+        
+        question = st.session_state.questions[i]
+        st.session_state[i] = answer
+        with st.chat_message('assistant'):
+            st.markdown(question)
+        st.session_state.messages.append({'role':'assistant','content':question})
+
+        
 
 
 
