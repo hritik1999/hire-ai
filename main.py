@@ -140,6 +140,12 @@ def result(evaluations):
     result['total_score'] = final_score
     return result
 
+def score(evaluation):
+    score = int(evaluation['Accuracy']) + int(evaluation['Depth']) + int(evaluation['Coherence'])+int(evaluation['Grammar and Clarity'])+ int(evaluation['Technical Skills'])+int(evaluation['Problem-Solving'])+int(evaluation['Creativity'])
+    score /= 70
+    score *=100
+    return score
+
 pd.set_option('max_colwidth',None)
     
 def display_result(role,questions,llm):
@@ -148,7 +154,8 @@ def display_result(role,questions,llm):
         try:
             evaluation = evaluate_answer(role,questions[i],st.session_state[i],llm)
             with st.expander("Question: "+questions[i]):
-                st.write("Evaluation:")
+                st.write("Evaluation: ",score(evaluation))
+                st.write("Breakdown, Tips and Reasoning: ")
                 st.table(pd.Series(evaluation))
                 st.write("Answer:")
                 st.write(st.session_state[i])
@@ -213,13 +220,3 @@ with st.container():
         st.session_state.messages.append({'role':'assistant','content':question})
 
    
-
-
-
-
-
-
-
-
-
-
