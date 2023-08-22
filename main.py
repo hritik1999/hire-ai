@@ -130,7 +130,7 @@ def result(evaluations):
     result *= 100
     final_score = result.mean()
     result['total_score'] = final_score
-    return result 
+    return result
 
 pd.set_option('max_colwidth',None)
     
@@ -148,17 +148,18 @@ def display_result(role,questions,llm):
         except:
             pass
     final = result(evaluations)
-    st.write("result:")
+    st.write("Result: Your score is out of 100.")
     st.table(final)
     st.write("Thank you for your time. We will get back to you soon.")
     st.balloons()
     st.write('Please refresh the page to start a new interview.')
 
+st.set_page_config(page_title="Hire AI",page_icon=" :briefcase: ",layout="wide")
 
 st.header('AI Interviewer')
 
 with st.sidebar:
-        st.title("Hire AI")
+        st.title("Hire AI :briefcase:")
         name = st.text_input("Name", key="name", value="John Doe")
         job_description = st.text_area("Job description(copy paste from linkedin or any site)", key="job_description", height=400)
 
@@ -176,7 +177,7 @@ if "messages" not in st.session_state:
     st.session_state.questions = role_questions['questions']
     st.session_state.i = 0
     st.session_state.messages = [{'role':'assistant','content':"Welcome to Hire AI "+name+", I am your AI interviwer. I will be asking you a few questions to evaluate your skills. for the job role of a "+st.session_state.role+"."},
-                                 {'role':'assistant','content':"Please answer the following "+str(len(st.session_state.questions))+" questions to the best of your ability. If you dont know the answer to a question, please type 'I dont know' or 'I dont know the answer to this question'."},
+                                 {'role':'assistant','content':"Please answer the following "+str(len(st.session_state.questions))+" questions to the best of your ability. You are being evaluated based on accuracy, depth, coherence, grammar, technical skills, problem-solving, and creativity. To achieve high scores in all these criteria, please provide detailed answers with examples, use cases, and innovations if applicable. If you don't know the answer to a question, please type 'I don't know' or 'I don't know the answer to this question'."},
                                  {'role':'assistant','content':st.session_state.questions[0]}]
     
 if st.session_state.i == (len(st.session_state.questions)-1):
@@ -193,16 +194,17 @@ with st.container():
     if answer := st.chat_input('answer',disabled=st.session_state["disabled"]):
         st.chat_message('user').markdown(answer)
         st.session_state.messages.append({'role':'user','content':answer})
-        st.session_state.i += 1
         i = st.session_state.i
+        st.session_state[i] = answer
+        st.session_state.i += 1
+        i += 1
         
         question = st.session_state.questions[i]
-        st.session_state[i] = answer
         with st.chat_message('assistant'):
             st.markdown(question)
         st.session_state.messages.append({'role':'assistant','content':question})
 
-        
+   
 
 
 
