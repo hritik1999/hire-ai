@@ -94,20 +94,28 @@ Response: ###{answer}###
 {output_format}
 """
     response_schemas = [
+    ResponseSchema(name="question", description="question that was asked"),
     ResponseSchema(name="Accuracy", description="the accuracy score assigned"),
-    ResponseSchema(name="Accuracy_reason", description="The reason for the accuracy score assigned"),    
+    ResponseSchema(name="Accuracy_reason", description="The reason for the accuracy score assigned"),
+    ResponseSchema(name="Accuracy_tips", description="Tips to improve the accuracy score assigned"),
     ResponseSchema(name="Depth", description="the depth score assigned"),
-    ResponseSchema(name="Depth_reason", description="The reason for the Depth score assigned"),
+    ResponseSchema(name="Depth_reason", description="The reason for the Depth score"),
+    ResponseSchema(name="Depth_tips", description="Tips to improve the depth score"),
     ResponseSchema(name="Coherence", description="the Coherence score assigned"),
     ResponseSchema(name="Coherence_reason", description="The reason for the Coherence score assigned"),
+    ResponseSchema(name="Coherence_tips", description="Tips to improve the coherence score"),
     ResponseSchema(name="Grammar and Clarity", description="the grammar and clarity score assigned"),
     ResponseSchema(name="Grammar_reason", description="The reason for the Grammar and Clarity score assigned"),
+    ResponseSchema(name="Grammar_tips", description="Tips to improve the Grammar and Clarity score"),
     ResponseSchema(name="Technical Skills", description="the Technical skills score assigned"),
     ResponseSchema(name="Technical_reason", description="The reason for the Technical Skill score assigned"),
+    ResponseSchema(name="Technical_tips", description="Tips to improve the Technical score"),
     ResponseSchema(name="Problem-Solving", description="the Problem-Solving score assigned"),
     ResponseSchema(name="Problem_Solving_reason", description="The reason for the  score assigned"),
+    ResponseSchema(name="Problem_Solving_tips", description="Tips to improve the problem solving score"),
     ResponseSchema(name="Creativity", description="the Creativity score assigned"),
-    ResponseSchema(name="Creativity_reason", description="The reason for the Creativity score assigned"),
+    ResponseSchema(name="Creativity_reason", description="The reason for the Creativity score"),
+    ResponseSchema(name="Creativity_tips", description="Tips to improve the Creativity score")
 ]
     output_parser_3 = StructuredOutputParser.from_response_schemas(response_schemas)
     output_format = output_parser_3.get_format_instructions()
