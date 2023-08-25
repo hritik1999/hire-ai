@@ -165,7 +165,7 @@ def display_result(role,questions,llm):
     st.write("Result: Your score is out of 100.")
     st.table(final)
     data , count = supabase.table('Leaderboard').insert({'Name':name,'Role':st.session_state.role,'Category':st.session_state.category,'Final Score':final['total_score']}).execute()
-    st.write("Thank you for your time. We will get back to you soon.")
+    st.write("Thank you for your time.")
     st.balloons()
     st.write('Please refresh the page to start a new interview.')
 
