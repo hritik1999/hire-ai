@@ -17,6 +17,8 @@ categories = ["Leadership and Management","Sales and Marketing","Finance and Ope
 
 rows = run_query()
 
+st.set_page_config(page_title="Hire AI",page_icon=" :briefcase: ",layout="wide")
+
 st.sidebar.title("Hire AI Leaderboard")
 st.title("Category wise leaderboard")
 data = pd.DataFrame.from_dict(rows.data).drop(columns=["id"])
