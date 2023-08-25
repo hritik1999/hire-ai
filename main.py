@@ -16,7 +16,7 @@ that the interviewee should be familiar with based on the job description provid
 
 ###{job_description}###
 
-If the provided input is not a job description then output 'none' for role,'none' for category and 'job description not given' for topics.
+If the provided input is not a valid job description then output 'none' for role,'none' for category and 'job description not given' for topics.
 
 {format_instructions}
 """
@@ -182,12 +182,12 @@ st.header('AI Interviewer')
 
 with st.sidebar:
         st.title("Hire AI :briefcase:")
-        name = st.text_input("Name", key="name", value="John Doe")
+        name = st.text_input("Name", key="name")
         job_description = st.text_area("Job description(copy paste from linkedin or any site)", key="job_description", height=400)
 
 
-if not job_description:
-    st.info("Please enter a job description in the Sidebar!")
+if not (job_description and name):
+    st.info("Please enter a name and job description in the Sidebar!")
     st.stop()
 
 if "disabled" not in st.session_state:
