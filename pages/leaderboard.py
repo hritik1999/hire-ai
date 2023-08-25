@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 from supabase import create_client, Client
 
 def init_connection():
@@ -17,12 +18,14 @@ categories = ["Leadership and Management","Sales and Marketing","Finance and Ope
 rows = run_query()
 
 st.sidebar.title("Hire AI Leaderboard")
-st.title("Leaderboard")
-st.write("Category wise leaderboard")
-data = pd.DataFrame.from_dict(rows.data)
+st.title("Category wise leaderboard")
+data = pd.DataFrame.from_dict(rows.data).drop(columns=["id"])
 
 for category in categories:
     st.subheader(category)
-    st.table(data[data["Category"]==category].sort_values(by=["Final Score"], ascending=False))
+    df = data[data["Category"]==category].sort_values(by=["Final Score"], ascending=False)
+    df.index = np.arange(1, len(df) + 1)
+    df.index.name = "Rank"
+    st.table(df[["Name","Role","Final Score"]])
 
 
