@@ -1,13 +1,10 @@
 import streamlit as st
 import pandas as pd
 from langchain.chat_models import ChatOpenAI
-from langchain.llms import OpenAI 
 from langchain.prompts.chat import PromptTemplate
 from langchain.chains import LLMChain,SequentialChain
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
-import os
-
-##os.environ['OPENAI_API_KEY'] = st.secrets['OPENAI_API_KEY']
+from supabase import create_client, Client
 
 llm = ChatOpenAI(openai_api_key=st.secrets['OPENAI_API_KEY'],temperature=0.0)
 
@@ -19,13 +16,14 @@ that the interviewee should be familiar with based on the job description provid
 
 ###{job_description}###
 
-If the provided input is not a job description then output 'none' for role and 'job description not given' for topics.
+If the provided input is not a job description then output 'none' for role,'none' for category and 'job description not given' for topics.
 
 {format_instructions}
 """
 
     response_schemas = [
     ResponseSchema(name="role", description="role of the given job description"),
+    ResponseSchema(name="Category", description='Put the role in one of the following categories ["Leadership and Management","Sales and Marketing","Finance and Operations","Technology and Innovation","Operation and Supply Chain","Human Resource"]'),
     ResponseSchema(name="topics", description="python list of concepts")
 ]
     output_parser_1 = StructuredOutputParser.from_response_schemas(response_schemas)
@@ -62,8 +60,9 @@ if The topics contains 'job descriptions not given' then output ['Please give a 
     
     output = overall_chain({"job_description":job_description,"format_instructions":format_instructions,"instruction_format":instructions})
     role = output_parser_1.parse(output['concepts'])['role']
+    category = output_parser_1.parse(output['concepts'])['Category']
     questions = output_parser_2.parse(output['questions'])['questions']
-    return {'role':role,'questions':questions}
+    return {'role':role,'category':category,'questions':questions}
     
 
 def evaluate_answer(role,question,answer,llm):
@@ -165,9 +164,17 @@ def display_result(role,questions,llm):
     final = result(evaluations)
     st.write("Result: Your score is out of 100.")
     st.table(final)
+    data , count = supabase.table('Leaderboard').insert({'Name':name,'Role':st.session_state.role,'Category':st.session_state.category,'Final Score':final['total_score']}).execute()
     st.write("Thank you for your time. We will get back to you soon.")
     st.balloons()
     st.write('Please refresh the page to start a new interview.')
+
+def init_connection():
+    url = st.secrets["supabase_url"]
+    key = st.secrets["supabase_key"]
+    return create_client(url, key)
+
+supabase = init_connection()
 
 st.set_page_config(page_title="Hire AI",page_icon=" :briefcase: ",layout="wide")
 
@@ -189,9 +196,10 @@ if "disabled" not in st.session_state:
 if "messages" not in st.session_state:
     role_questions = generate_questions(job_description,llm)
     st.session_state.role = role_questions['role']
+    st.session_state.category = role_questions['category']
     st.session_state.questions = role_questions['questions']
     st.session_state.i = 0
-    st.session_state.messages = [{'role':'assistant','content':"Welcome to Hire AI "+name+", I am your AI interviwer. I will be asking you a few questions to evaluate your skills. for the job role of a "+st.session_state.role+"."},
+    st.session_state.messages = [{'role':'assistant','content':"Welcome to Hire AI "+name+", I am your AI interviwer. I will be asking you a few questions to evaluate your skills. for the job role of a "+st.session_state.role+" in category "+st.session_state.category+"."},
                                  {'role':'assistant','content':"Please answer the following "+str(len(st.session_state.questions))+" questions to the best of your ability. You are being evaluated based on accuracy, depth, coherence, grammar, technical skills, problem-solving, and creativity. To achieve high scores in all these criteria, please provide detailed answers with examples, use cases, and innovations if applicable. If you don't know the answer to a question, please type 'I don't know' or 'I don't know the answer to this question'."},
                                  {'role':'assistant','content':st.session_state.questions[0]}]
     
