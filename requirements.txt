@@ -1,4 +1,5 @@
 streamlit
-openai
 langchain
 pandas
+supabase
+openai
