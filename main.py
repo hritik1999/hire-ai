@@ -182,9 +182,10 @@ st.header('AI Interviewer')
 
 with st.sidebar:
         st.title("Hire AI :briefcase:")
-        name = st.text_input("Name", key="name")
-        job_description = st.text_area("Job description(copy paste from linkedin or any site)", key="job_description", height=400)
-
+        with st.form(key="form"):
+            name = st.text_input("Name", key="name")
+            job_description = st.text_area("Job description(copy paste from linkedin or any site)", key="job_description", height=400)
+            submit_button = st.form_submit_button(label="Submit")
 
 if not (job_description and name):
     st.info("Please enter a name and job description in the Sidebar!")
