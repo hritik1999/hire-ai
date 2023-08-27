@@ -178,6 +178,14 @@ supabase = init_connection()
 
 st.set_page_config(page_title="Hire AI",page_icon=" :briefcase: ",layout="wide")
 
+css = r'''
+    <style>
+        [data-testid="stForm"] {border: 0px}
+    </style>
+'''
+
+st.markdown(css, unsafe_allow_html=True)
+
 st.header('AI Interviewer')
 
 with st.sidebar:
